@@ -1,6 +1,17 @@
+export interface ProjectDocument {
+  id: string;
+  name: string;
+  size: string;
+  type: string;
+  category: 'عقد المشروع' | 'المخططات الهندسية' | 'جدول الكميات (BOQ)' | 'تراخيص الموقع' | 'أخرى';
+  uploadedAt: string;
+}
+
 export interface Project {
   id: string;
   name: string;
+  contractCode?: string;
+  description?: string;
   category: 'إنشائي' | 'تشطيبات' | 'كهرباء / تيار خفيف' | 'ميكانيكا' | 'تيار خفيف';
   progress: number;
   initialDelivery: number;
@@ -13,6 +24,7 @@ export interface Project {
   endDate: string;
   manager: string;
   image: string;
+  documents?: ProjectDocument[];
 }
 
 export interface ApprovalItem {

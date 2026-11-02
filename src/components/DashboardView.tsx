@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Building2,
   HardHat,
@@ -7,35 +7,50 @@ import {
   Wallet,
   PieChart as PieIcon,
   CheckCircle2,
-  Clock,
-  AlertTriangle,
   ArrowUpRight,
-  ShieldCheck,
-  ShieldAlert,
-  Calendar,
   FileText,
   ExternalLink,
   Check,
   X,
-  CheckSquare
+  CheckSquare,
+  Paintbrush,
+  Zap,
+  Radio,
+  Snowflake,
+  ShieldAlert
 } from 'lucide-react';
 import { useApp } from '../store/AppContext';
 import { ExecutiveKPIsCard } from './ExecutiveKPIsCard';
 import { AuditLogCard } from './AuditLogCard';
 import { SmartSearchBar } from './SmartSearchBar';
+import { ProjectsTabbedSection } from './ProjectsTabbedSection';
 
 export const DashboardView: React.FC = () => {
-  const { projects, approvals, handleApprovalAction, setActiveTab } = useApp();
+  const { approvals, handleApprovalAction, setActiveTab, setSubTab } = useApp();
+  const [hoveredSpecialty, setHoveredSpecialty] = useState<string | null>(null);
+
+  const specialtiesData = [
+    { id: 'إنشائي', label: 'الأعمال الإنشائية', count: 9, percent: 33.3, color: '#3b82f6', icon: Building2 },
+    { id: 'تشطيبات', label: 'أعمال التشطيبات', count: 6, percent: 22.2, color: '#8b5cf6', icon: Paintbrush },
+    { id: 'ميكانيكا', label: 'الأعمال الميكانيكية', count: 5, percent: 18.5, color: '#10b981', icon: Snowflake },
+    { id: 'كهرباء', label: 'كهرباء باور', count: 4, percent: 14.8, color: '#f59e0b', icon: Zap },
+    { id: 'تيار خفيف', label: 'تيار خفيف', count: 3, percent: 11.1, color: '#06b6d4', icon: Radio }
+  ];
+
+  // SVG Donut segments calculation for Specialties
+  const donutRadius = 46;
+  const donutCircumference = 2 * Math.PI * donutRadius;
+  let cumulativePercent = 0;
 
   return (
     <div className="p-4 lg:p-6 space-y-6 max-w-[1600px] mx-auto">
       
       {/* Smart Search Bar */}
-      <div className="mb-2">
+      <div className="mb-1">
         <SmartSearchBar />
       </div>
 
-      {/* Top 6 KPI Metric Cards matching the user requirements */}
+      {/* Top 6 KPI Metric Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
         
         {/* 1. إجمالي المشاريع */}
@@ -126,7 +141,7 @@ export const DashboardView: React.FC = () => {
 
       </div>
 
-      {/* Second Section: 3 Columns (Project Status, Monthly Portfolio Progress, Specialty Pie Chart) */}
+      {/* Second Section: 3 Columns (Project Status, Monthly Portfolio Progress, Specialty Donut Chart) */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         
         {/* Column 1: حالة المشاريع (Project Status) */}
@@ -137,10 +152,13 @@ export const DashboardView: React.FC = () => {
                 <CheckCircle2 className="w-5 h-5 text-emerald-400" />
                 <span>حالة المشاريع</span>
               </h3>
+              <span className="text-[11px] bg-slate-800 text-slate-300 px-2.5 py-0.5 rounded-full font-bold">
+                27 مشروعاً
+              </span>
             </div>
 
-            <div className="space-y-3.5">
-              <div className="flex items-center justify-between p-3 rounded-xl bg-slate-950/60 border border-slate-800">
+            <div className="space-y-3">
+              <div className="flex items-center justify-between p-3 rounded-xl bg-slate-950/70 border border-slate-800/90">
                 <div className="flex items-center gap-2.5">
                   <span className="w-3 h-3 rounded-full bg-emerald-500 shadow-sm"></span>
                   <span className="text-xs font-bold text-slate-200">مكتملة</span>
@@ -148,7 +166,7 @@ export const DashboardView: React.FC = () => {
                 <span className="text-xs font-extrabold text-emerald-400">6 <span className="text-[11px] text-slate-400 font-normal">(22.2%)</span></span>
               </div>
 
-              <div className="flex items-center justify-between p-3 rounded-xl bg-slate-950/60 border border-slate-800">
+              <div className="flex items-center justify-between p-3 rounded-xl bg-slate-950/70 border border-slate-800/90">
                 <div className="flex items-center gap-2.5">
                   <span className="w-3 h-3 rounded-full bg-blue-500 shadow-sm"></span>
                   <span className="text-xs font-bold text-slate-200">قيد التنفيذ</span>
@@ -156,7 +174,7 @@ export const DashboardView: React.FC = () => {
                 <span className="text-xs font-extrabold text-blue-400">18 <span className="text-[11px] text-slate-400 font-normal">(66.7%)</span></span>
               </div>
 
-              <div className="flex items-center justify-between p-3 rounded-xl bg-slate-950/60 border border-slate-800">
+              <div className="flex items-center justify-between p-3 rounded-xl bg-slate-950/70 border border-slate-800/90">
                 <div className="flex items-center gap-2.5">
                   <span className="w-3 h-3 rounded-full bg-amber-500 shadow-sm"></span>
                   <span className="text-xs font-bold text-slate-200">مؤجلة</span>
@@ -164,7 +182,7 @@ export const DashboardView: React.FC = () => {
                 <span className="text-xs font-extrabold text-amber-400">2 <span className="text-[11px] text-slate-400 font-normal">(7.4%)</span></span>
               </div>
 
-              <div className="flex items-center justify-between p-3 rounded-xl bg-slate-950/60 border border-slate-800">
+              <div className="flex items-center justify-between p-3 rounded-xl bg-slate-950/70 border border-slate-800/90">
                 <div className="flex items-center gap-2.5">
                   <span className="w-3 h-3 rounded-full bg-red-500 shadow-sm"></span>
                   <span className="text-xs font-bold text-slate-200">معرضة للمخاطر</span>
@@ -177,7 +195,7 @@ export const DashboardView: React.FC = () => {
           <div className="mt-4 pt-3 border-t border-slate-800 text-center">
             <button
               onClick={() => setActiveTab('projects')}
-              className="text-xs text-blue-400 hover:text-blue-300 font-bold flex items-center justify-center gap-1.5 w-full py-1 hover:bg-slate-800/40 rounded-lg transition-colors"
+              className="text-xs text-blue-400 hover:text-blue-300 font-bold flex items-center justify-center gap-1.5 w-full py-1.5 hover:bg-slate-800/50 rounded-xl transition-colors"
             >
               <span>عرض تفاصيل جميع المشاريع (27)</span>
               <ExternalLink className="w-3.5 h-3.5" />
@@ -187,202 +205,193 @@ export const DashboardView: React.FC = () => {
 
         {/* Column 2: تقدم المحفظة (شهرياً) */}
         <div className="lg:col-span-5 bg-slate-900/90 backdrop-blur-md p-5 lg:p-6 rounded-2xl border border-slate-800 shadow-xl flex flex-col justify-between">
-          <div className="flex items-center justify-between mb-4 pb-3 border-b border-slate-800">
-            <h3 className="font-bold text-white text-base flex items-center gap-2.5">
-              <TrendingUp className="w-5 h-5 text-blue-400" />
-              <span>تقدم المحفظة (شهرياً)</span>
-            </h3>
-            <span className="text-xs bg-blue-900/60 text-blue-300 px-3 py-1 rounded-full border border-blue-500/30 font-bold shadow-sm">
-              78% إنجاز حالي
-            </span>
+          <div>
+            <div className="flex items-center justify-between mb-4 pb-3 border-b border-slate-800">
+              <h3 className="font-bold text-white text-base flex items-center gap-2.5">
+                <TrendingUp className="w-5 h-5 text-blue-400" />
+                <span>تقدم المحفظة (شهرياً)</span>
+              </h3>
+              <span className="text-xs bg-blue-900/60 text-blue-300 px-3 py-1 rounded-full border border-blue-500/30 font-bold shadow-sm">
+                78% إنجاز حالي
+              </span>
+            </div>
+
+            <div className="relative h-52 w-full flex items-end justify-between px-2 pt-6 pb-2 bg-slate-950/60 rounded-xl border border-slate-800/80">
+              <div className="absolute inset-0 flex flex-col justify-between p-4 pointer-events-none opacity-20">
+                <div className="border-b border-slate-600 w-full text-[10px] text-right font-medium">100%</div>
+                <div className="border-b border-slate-600 w-full text-[10px] text-right font-medium">80%</div>
+                <div className="border-b border-slate-600 w-full text-[10px] text-right font-medium">60%</div>
+                <div className="border-b border-slate-600 w-full text-[10px] text-right font-medium">40%</div>
+                <div className="border-b border-slate-600 w-full text-[10px] text-right font-medium">20%</div>
+              </div>
+
+              <svg className="absolute inset-0 w-full h-full p-4 overflow-visible" preserveAspectRatio="none" viewBox="0 0 600 160">
+                <path
+                  d="M 20,110 Q 120,95 220,85 T 420,65 T 560,40"
+                  fill="none"
+                  stroke="#3b82f6"
+                  strokeWidth="3.5"
+                  strokeLinecap="round"
+                />
+                <path
+                  d="M 20,110 Q 120,95 220,85 T 420,65 T 560,40 L 560,150 L 20,150 Z"
+                  fill="url(#blueGrad)"
+                  opacity="0.25"
+                />
+                <defs>
+                  <linearGradient id="blueGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#3b82f6" />
+                    <stop offset="100%" stopColor="#3b82f6" stopOpacity="0" />
+                  </linearGradient>
+                </defs>
+              </svg>
+
+              <div className="relative z-10 w-full flex justify-between text-center px-3">
+                {[
+                  { month: 'يونيو', val: '52%' },
+                  { month: 'يوليو', val: '58%' },
+                  { month: 'أغسطس', val: '63%' },
+                  { month: 'سبتمبر', val: '68%' },
+                  { month: 'أكتوبر', val: '72%' },
+                  { month: 'نوفمبر', val: '78%', active: true }
+                ].map((m) => (
+                  <div key={m.month} className="flex flex-col items-center">
+                    <span className={`text-[10px] font-bold mb-1 ${m.active ? 'text-blue-300' : 'text-slate-400'}`}>
+                      {m.val}
+                    </span>
+                    <div
+                      className={`w-3 h-3 rounded-full border-2 border-white shadow mb-1 ${
+                        m.active ? 'bg-blue-400 w-3.5 h-3.5 animate-pulse' : 'bg-blue-500'
+                      }`}
+                    />
+                    <span className={`text-[11px] font-bold ${m.active ? 'text-blue-400 font-extrabold' : 'text-slate-400'}`}>
+                      {m.month}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
 
-          <div className="relative h-48 w-full flex items-end justify-between px-2 pt-6 pb-2 bg-slate-950/60 rounded-xl border border-slate-800/80">
-            <div className="absolute inset-0 flex flex-col justify-between p-4 pointer-events-none opacity-20">
-              <div className="border-b border-slate-600 w-full text-[10px] text-right font-medium">100%</div>
-              <div className="border-b border-slate-600 w-full text-[10px] text-right font-medium">80%</div>
-              <div className="border-b border-slate-600 w-full text-[10px] text-right font-medium">60%</div>
-              <div className="border-b border-slate-600 w-full text-[10px] text-right font-medium">40%</div>
-              <div className="border-b border-slate-600 w-full text-[10px] text-right font-medium">20%</div>
-            </div>
-
-            <svg className="absolute inset-0 w-full h-full p-4 overflow-visible" preserveAspectRatio="none" viewBox="0 0 600 160">
-              <path
-                d="M 20,110 Q 120,95 220,85 T 420,65 T 560,40"
-                fill="none"
-                stroke="#3b82f6"
-                strokeWidth="3.5"
-                strokeLinecap="round"
-              />
-              <path
-                d="M 20,110 Q 120,95 220,85 T 420,65 T 560,40 L 560,150 L 20,150 Z"
-                fill="url(#blueGrad)"
-                opacity="0.25"
-              />
-              <defs>
-                <linearGradient id="blueGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#3b82f6" />
-                  <stop offset="100%" stopColor="#3b82f6" stopOpacity="0" />
-                </linearGradient>
-              </defs>
-            </svg>
-
-            <div className="relative z-10 w-full flex justify-between text-center px-3">
-              <div className="flex flex-col items-center">
-                <div className="w-3 h-3 bg-blue-500 rounded-full border-2 border-white shadow mb-1"></div>
-                <span className="text-[11px] text-slate-400 font-bold">يونيو</span>
-              </div>
-              <div className="flex flex-col items-center">
-                <div className="w-3 h-3 bg-blue-500 rounded-full border-2 border-white shadow mb-1"></div>
-                <span className="text-[11px] text-slate-400 font-bold">يوليو</span>
-              </div>
-              <div className="flex flex-col items-center">
-                <div className="w-3 h-3 bg-blue-500 rounded-full border-2 border-white shadow mb-1"></div>
-                <span className="text-[11px] text-slate-400 font-bold">أغسطس</span>
-              </div>
-              <div className="flex flex-col items-center">
-                <div className="w-3 h-3 bg-blue-500 rounded-full border-2 border-white shadow mb-1"></div>
-                <span className="text-[11px] text-slate-400 font-bold">سبتمبر</span>
-              </div>
-              <div className="flex flex-col items-center">
-                <div className="w-3 h-3 bg-blue-500 rounded-full border-2 border-white shadow mb-1"></div>
-                <span className="text-[11px] text-slate-400 font-bold">أكتوبر</span>
-              </div>
-              <div className="flex flex-col items-center">
-                <div className="w-3.5 h-3.5 bg-blue-400 rounded-full border-2 border-white shadow mb-1 animate-pulse"></div>
-                <span className="text-[11px] text-blue-400 font-extrabold">نوفمبر</span>
-              </div>
-            </div>
+          <div className="mt-4 pt-3 border-t border-slate-800 flex items-center justify-between text-xs text-slate-400">
+            <span>معدل النمو الشهري المتوسط: <strong className="text-emerald-400">+5.2%</strong></span>
+            <span className="text-blue-400 font-bold">الربع الرابع 2026</span>
           </div>
         </div>
 
-        {/* Column 3: المشاريع حسب التخصص (Specialty Donut Chart & Legend) */}
+        {/* Column 3: المشاريع حسب التخصص (Redesigned Clean SVG Donut + Interactive Specialty Bars) */}
         <div className="lg:col-span-4 bg-slate-900/90 backdrop-blur-md p-5 lg:p-6 rounded-2xl border border-slate-800 shadow-xl flex flex-col justify-between">
-          <div className="flex items-center justify-between mb-4 pb-3 border-b border-slate-800">
-            <h3 className="font-bold text-white text-base flex items-center gap-2.5">
-              <PieIcon className="w-5 h-5 text-indigo-400" />
-              <span>المشاريع حسب التخصص</span>
-            </h3>
-          </div>
+          <div>
+            <div className="flex items-center justify-between mb-4 pb-3 border-b border-slate-800">
+              <h3 className="font-bold text-white text-base flex items-center gap-2.5">
+                <PieIcon className="w-5 h-5 text-indigo-400" />
+                <span>المشاريع حسب التخصص</span>
+              </h3>
+              <span className="text-[11px] bg-indigo-950 text-indigo-300 px-2.5 py-0.5 rounded-full border border-indigo-800 font-bold">
+                5 قطاعات
+              </span>
+            </div>
 
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 py-2">
-            <div className="relative flex items-center justify-center shrink-0">
-              <div className="w-32 h-32 rounded-full border-8 border-blue-600 relative flex items-center justify-center shadow-xl bg-slate-950">
-                <div className="absolute inset-0 rounded-full border-8 border-purple-500 border-t-transparent border-l-transparent rotate-45"></div>
-                <div className="absolute inset-0 rounded-full border-8 border-emerald-500 border-t-transparent border-r-transparent -rotate-12"></div>
-                <div className="absolute inset-0 rounded-full border-8 border-cyan-400 border-b-transparent border-l-transparent rotate-90"></div>
-                <div className="text-center z-10">
-                  <span className="block text-2xl font-black text-white">27</span>
-                  <span className="block text-[11px] text-slate-300 font-bold">مشروعاً</span>
+            <div className="flex flex-col sm:flex-row items-center gap-4 my-1">
+              {/* Accurate Multi-Segment SVG Donut Chart */}
+              <div className="relative w-36 h-36 shrink-0 flex items-center justify-center">
+                <svg className="w-full h-full -rotate-90" viewBox="0 0 120 120">
+                  <circle
+                    cx="60"
+                    cy="60"
+                    r={donutRadius}
+                    fill="transparent"
+                    stroke="#1e293b"
+                    strokeWidth="12"
+                  />
+                  {specialtiesData.map((spec) => {
+                    const strokeDasharray = `${(spec.percent / 100) * donutCircumference} ${donutCircumference}`;
+                    const strokeDashoffset = -((cumulativePercent / 100) * donutCircumference);
+                    cumulativePercent += spec.percent;
+                    const isHovered = hoveredSpecialty === spec.id;
+                    return (
+                      <circle
+                        key={spec.id}
+                        cx="60"
+                        cy="60"
+                        r={donutRadius}
+                        fill="transparent"
+                        stroke={spec.color}
+                        strokeWidth={isHovered ? '15' : '12'}
+                        strokeDasharray={strokeDasharray}
+                        strokeDashoffset={strokeDashoffset}
+                        className="transition-all duration-300 cursor-pointer"
+                        onMouseEnter={() => setHoveredSpecialty(spec.id)}
+                        onMouseLeave={() => setHoveredSpecialty(null)}
+                      />
+                    );
+                  })}
+                </svg>
+                <div className="absolute inset-0 flex flex-col items-center justify-center text-center pointer-events-none">
+                  <span className="text-2xl font-black text-white leading-none">27</span>
+                  <span className="text-[11px] text-slate-300 font-bold mt-1">مشروعاً</span>
                 </div>
               </div>
-            </div>
 
-            <div className="w-full space-y-2 text-xs">
-              <div className="flex items-center justify-between p-1.5 rounded-lg bg-slate-950/50 border border-slate-800/60">
-                <span className="flex items-center gap-2 text-slate-300 font-medium"><span className="w-2.5 h-2.5 rounded-full bg-blue-600 shadow-sm"></span>إنشائي</span>
-                <span className="font-extrabold text-white">33.3%</span>
-              </div>
-              <div className="flex items-center justify-between p-1.5 rounded-lg bg-slate-950/50 border border-slate-800/60">
-                <span className="flex items-center gap-2 text-slate-300 font-medium"><span className="w-2.5 h-2.5 rounded-full bg-purple-500 shadow-sm"></span>تشطيبات</span>
-                <span className="font-extrabold text-white">22.2%</span>
-              </div>
-              <div className="flex items-center justify-between p-1.5 rounded-lg bg-slate-950/50 border border-slate-800/60">
-                <span className="flex items-center gap-2 text-slate-300 font-medium"><span className="w-2.5 h-2.5 rounded-full bg-amber-500 shadow-sm"></span>كهرباء باور</span>
-                <span className="font-extrabold text-white">14.8%</span>
-              </div>
-              <div className="flex items-center justify-between p-1.5 rounded-lg bg-slate-950/50 border border-slate-800/60">
-                <span className="flex items-center gap-2 text-slate-300 font-medium"><span className="w-2.5 h-2.5 rounded-full bg-cyan-400 shadow-sm"></span>تيار خفيف</span>
-                <span className="font-extrabold text-white">11.1%</span>
-              </div>
-              <div className="flex items-center justify-between p-1.5 rounded-lg bg-slate-950/50 border border-slate-800/60">
-                <span className="flex items-center gap-2 text-slate-300 font-medium"><span className="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-sm"></span>ميكانيكا</span>
-                <span className="font-extrabold text-white">18.5%</span>
+              {/* Interactive Specialty Breakdown List */}
+              <div className="w-full space-y-2 text-xs">
+                {specialtiesData.map((spec) => {
+                  const isHovered = hoveredSpecialty === spec.id;
+                  return (
+                    <button
+                      key={spec.id}
+                      type="button"
+                      onMouseEnter={() => setHoveredSpecialty(spec.id)}
+                      onMouseLeave={() => setHoveredSpecialty(null)}
+                      onClick={() => {
+                        setSubTab(spec.id);
+                        setActiveTab('projects');
+                      }}
+                      className={`w-full p-2 rounded-xl border transition-all flex flex-col gap-1 text-right ${
+                        isHovered
+                          ? 'bg-slate-800/90 border-blue-500/60 shadow-md'
+                          : 'bg-slate-950/60 border-slate-800/80 hover:bg-slate-900'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between w-full">
+                        <span className="flex items-center gap-2 text-slate-200 font-bold">
+                          <span
+                            className="w-2.5 h-2.5 rounded-full shrink-0"
+                            style={{ backgroundColor: spec.color }}
+                          />
+                          <span>{spec.label}</span>
+                        </span>
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-[10px] text-slate-400">({spec.count})</span>
+                          <span className="font-black text-white">{spec.percent}%</span>
+                        </div>
+                      </div>
+                      <div className="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
+                        <div
+                          className="h-full rounded-full transition-all duration-500"
+                          style={{ width: `${spec.percent}%`, backgroundColor: spec.color }}
+                        />
+                      </div>
+                    </button>
+                  );
+                })}
               </div>
             </div>
+          </div>
+
+          <div className="mt-4 pt-3 border-t border-slate-800 flex items-center justify-between text-[11px] text-slate-400">
+            <span>اضغط على أي تخصص لاستعراض مشاريعه</span>
+            <span className="text-indigo-400 font-bold">توزيع متوازن</span>
           </div>
         </div>
 
       </div>
 
-      {/* Third Section: 5 Active Project Cards with real photos & delivery percentages */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-        {projects.slice(0, 5).map((project) => (
-          <div
-            key={project.id}
-            className="bg-slate-900/90 backdrop-blur-md rounded-2xl border border-slate-800 shadow-xl overflow-hidden flex flex-col justify-between hover:border-blue-500/50 transition-all group"
-          >
-            <div className="relative h-36 w-full overflow-hidden">
-              <img
-                src={project.image}
-                alt={project.name}
-                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent"></div>
-              <div className="absolute top-2.5 right-2.5 bg-slate-900/90 backdrop-blur-md px-2.5 py-1 rounded-lg border border-slate-700 text-[11px] text-blue-300 font-bold shadow-sm">
-                {project.category}
-              </div>
-              <h4 className="absolute bottom-2.5 right-2.5 left-2.5 text-white font-extrabold text-sm truncate drop-shadow">
-                {project.name}
-              </h4>
-            </div>
-
-            <div className="p-3.5 space-y-3 text-xs">
-              <div className="space-y-1">
-                <div className="flex justify-between font-bold text-slate-300">
-                  <span>نسبة التنفيذ</span>
-                  <span className="text-blue-400 font-black">{project.progress}%</span>
-                </div>
-                <div className="w-full h-2 bg-slate-950 rounded-full overflow-hidden p-0.5 border border-slate-800">
-                  <div
-                    className="h-full bg-blue-500 rounded-full shadow"
-                    style={{ width: `${project.progress}%` }}
-                  ></div>
-                </div>
-              </div>
-
-              <div className="space-y-1">
-                <div className="flex justify-between font-bold text-slate-300">
-                  <span>التسليم الإبتدائي</span>
-                  <span className="text-emerald-400 font-black">{project.initialDelivery}%</span>
-                </div>
-                <div className="w-full h-2 bg-slate-950 rounded-full overflow-hidden p-0.5 border border-slate-800">
-                  <div
-                    className="h-full bg-emerald-500 rounded-full shadow"
-                    style={{ width: `${project.initialDelivery}%` }}
-                  ></div>
-                </div>
-              </div>
-
-              <div className="space-y-1">
-                <div className="flex justify-between font-bold text-slate-300">
-                  <span>التسليم النهائي</span>
-                  <span className="text-purple-400 font-black">{project.finalDelivery}%</span>
-                </div>
-                <div className="w-full h-2 bg-slate-950 rounded-full overflow-hidden p-0.5 border border-slate-800">
-                  <div
-                    className="h-full bg-purple-500 rounded-full shadow"
-                    style={{ width: `${project.finalDelivery}%` }}
-                  ></div>
-                </div>
-              </div>
-            </div>
-
-            <div className="p-3 bg-slate-950/70 border-t border-slate-800 text-center">
-              <button
-                onClick={() => setActiveTab('projects')}
-                className="text-xs text-blue-400 hover:text-blue-300 font-bold flex items-center justify-center gap-1.5 w-full py-1 hover:bg-slate-800/40 rounded-lg transition-colors"
-              >
-                <span>متابعة المشروع</span>
-                <ExternalLink className="w-3.5 h-3.5" />
-              </button>
-            </div>
-          </div>
-        ))}
-      </div>
+      {/* Third Section: Interactive Tabbed Projects by Status & Specialty */}
+      <ProjectsTabbedSection />
 
       {/* Fourth Section: Executive Interactive KPIs & Audit Log & Pending Approvals */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
         
         {/* Interactive Executive KPIs Card */}
         <div className="lg:col-span-4">
@@ -394,34 +403,69 @@ export const DashboardView: React.FC = () => {
           <AuditLogCard />
         </div>
 
-        {/* Card 2: الموافقات المعلقة (Pending Approvals) */}
-        <div className="lg:col-span-4 bg-slate-900/90 backdrop-blur-md p-6 rounded-2xl border border-slate-800 shadow-xl flex flex-col justify-between">
-          <div className="flex items-center justify-between mb-4 pb-3 border-b border-slate-800">
-            <h3 className="font-bold text-white text-base flex items-center gap-2.5">
-              <CheckSquare className="w-5 h-5 text-amber-400" />
-              <span>الموافقات المعلقة</span>
-            </h3>
+        {/* Card 3: الموافقات المعلقة (Pending Approvals) - Cleanly aligned without empty middle gap */}
+        <div className="lg:col-span-4 bg-slate-900/90 backdrop-blur-md p-5 lg:p-6 rounded-2xl border border-slate-800 shadow-xl flex flex-col h-full">
+          <div className="flex items-center justify-between pb-3.5 mb-4 border-b border-slate-800">
+            <div className="flex items-center gap-2.5">
+              <div className="p-2 rounded-xl bg-amber-500/20 text-amber-400 border border-amber-500/20">
+                <CheckSquare className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="font-bold text-white text-base">الموافقات والاعتمادات</h3>
+                <p className="text-[11px] text-slate-400">أوامر التغيير والعقود المعروضة للاعتماد</p>
+              </div>
+            </div>
             <button
               onClick={() => setActiveTab('approvals')}
-              className="text-xs text-blue-400 hover:text-blue-300 font-bold px-2.5 py-1 bg-blue-950/60 rounded-lg border border-blue-900/60"
+              className="text-xs text-blue-400 hover:text-blue-300 font-bold px-3 py-1.5 bg-blue-950/70 hover:bg-blue-900/70 rounded-xl border border-blue-800/70 transition-colors shrink-0"
             >
               عرض الكل
             </button>
           </div>
 
-          <div className="space-y-3">
+          {/* Summary Banner inside Pending Approvals */}
+          <div className="grid grid-cols-3 gap-2 mb-4 bg-slate-950/80 p-3 rounded-xl border border-slate-800/80 text-center">
+            <div>
+              <span className="text-[10px] text-slate-400 block">إجمالي الطلبات</span>
+              <span className="text-sm font-black text-white">{approvals.length}</span>
+            </div>
+            <div className="border-x border-slate-800">
+              <span className="text-[10px] text-slate-400 block">بانتظار القرار</span>
+              <span className="text-sm font-black text-amber-400">
+                {approvals.filter(a => a.status === 'معلق').length}
+              </span>
+            </div>
+            <div>
+              <span className="text-[10px] text-slate-400 block">تم البت فيها</span>
+              <span className="text-sm font-black text-emerald-400">
+                {approvals.filter(a => a.status !== 'معلق').length}
+              </span>
+            </div>
+          </div>
+
+          <div className="space-y-3 flex-1">
             {approvals.map((app) => (
               <div
                 key={app.id}
-                className="flex items-center justify-between p-3.5 rounded-xl bg-slate-950/60 border border-slate-800 hover:border-blue-500/40 transition-all gap-3"
+                className="flex items-center justify-between p-3.5 rounded-xl bg-slate-950/70 border border-slate-800/90 hover:border-blue-500/40 transition-all gap-3"
               >
-                <div className="flex items-center gap-3 overflow-hidden">
-                  <div className="p-2.5 rounded-xl bg-blue-600/20 text-blue-400 shrink-0">
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="p-2.5 rounded-xl bg-blue-600/20 text-blue-400 border border-blue-500/20 shrink-0">
                     <FileText className="w-4 h-4" />
                   </div>
-                  <div className="overflow-hidden">
-                    <h4 className="font-bold text-white text-xs truncate">{app.title}</h4>
-                    <span className="text-[11px] text-emerald-400 font-bold block mt-0.5">{app.amount}</span>
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2">
+                      <h4 className="font-bold text-white text-xs truncate">{app.title}</h4>
+                      {app.urgency === 'عاجل' && (
+                        <span className="text-[9px] bg-rose-950 text-rose-300 px-1.5 py-0.5 rounded border border-rose-800 font-bold shrink-0">
+                          عاجل
+                        </span>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-2 mt-1">
+                      <span className="text-xs text-emerald-400 font-extrabold">{app.amount}</span>
+                      <span className="text-[10px] text-slate-400">• {app.category}</span>
+                    </div>
                   </div>
                 </div>
 
@@ -430,29 +474,47 @@ export const DashboardView: React.FC = () => {
                     <>
                       <button
                         onClick={() => handleApprovalAction(app.id, 'معتمد')}
-                        className="p-2 bg-emerald-600/20 hover:bg-emerald-600 text-emerald-400 hover:text-white rounded-xl transition-colors shadow-sm"
+                        className="px-2.5 py-1.5 bg-emerald-600/20 hover:bg-emerald-600 text-emerald-400 hover:text-white rounded-xl transition-colors text-xs font-bold flex items-center gap-1 border border-emerald-500/30"
                         title="اعتماد"
                       >
-                        <Check className="w-4 h-4" />
+                        <Check className="w-3.5 h-3.5" />
+                        <span>اعتماد</span>
                       </button>
                       <button
                         onClick={() => handleApprovalAction(app.id, 'مرفوض')}
-                        className="p-2 bg-red-600/20 hover:bg-red-600 text-red-400 hover:text-white rounded-xl transition-colors shadow-sm"
+                        className="p-1.5 bg-red-600/20 hover:bg-red-600 text-red-400 hover:text-white rounded-xl transition-colors border border-red-500/30"
                         title="رفض"
                       >
-                        <X className="w-4 h-4" />
+                        <X className="w-3.5 h-3.5" />
                       </button>
                     </>
                   ) : (
-                    <span className={`text-xs px-2.5 py-1 rounded-full font-bold ${
-                      app.status === 'معتمد' ? 'bg-emerald-950 text-emerald-300 border border-emerald-800' : 'bg-red-950 text-red-300 border border-red-800'
-                    }`}>
+                    <span
+                      className={`text-xs px-3 py-1 rounded-full font-bold ${
+                        app.status === 'معتمد'
+                          ? 'bg-emerald-950 text-emerald-300 border border-emerald-800'
+                          : 'bg-red-950 text-red-300 border border-red-800'
+                      }`}
+                    >
                       {app.status}
                     </span>
                   )}
                 </div>
               </div>
             ))}
+          </div>
+
+          <div className="mt-4 pt-3 border-t border-slate-800 flex items-center justify-between text-[11px] text-slate-400">
+            <span className="flex items-center gap-1.5">
+              <ShieldAlert className="w-4 h-4 text-amber-400" />
+              صلاحية الاعتماد المباشر لرئيس مجلس الإدارة
+            </span>
+            <button
+              onClick={() => setActiveTab('approvals')}
+              className="text-blue-400 hover:text-blue-300 font-bold"
+            >
+              سجل القرارات ←
+            </button>
           </div>
         </div>
 

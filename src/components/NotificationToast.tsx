@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { CheckCircle2, AlertTriangle, AlertOctagon, Info, X } from 'lucide-react';
 import { useApp } from '../store/AppContext';
@@ -7,19 +7,18 @@ import { NotificationItem } from '../types';
 export const NotificationToast: React.FC = () => {
   const { notifications } = useApp();
   const [activeToasts, setActiveToasts] = useState<NotificationItem[]>([]);
+  const seenIdsRef = useRef<Set<string>>(new Set(notifications.map(n => n.id)));
 
   useEffect(() => {
-    // Take the latest unread notification and show as toast
     if (notifications.length > 0) {
       const latest = notifications[0];
-      // Check if already in toasts
-      if (!activeToasts.some(t => t.id === latest.id)) {
-        setActiveToasts(prev => [latest, ...prev.slice(0, 2)]); // Keep max 3 toasts
-        
-        // Auto remove after 5 seconds
+      if (!seenIdsRef.current.has(latest.id)) {
+        seenIdsRef.current.add(latest.id);
+        setActiveToasts(prev => [latest, ...prev.slice(0, 2)]);
+
         const timer = setTimeout(() => {
           setActiveToasts(prev => prev.filter(t => t.id !== latest.id));
-        }, 5000);
+        }, 4500);
 
         return () => clearTimeout(timer);
       }

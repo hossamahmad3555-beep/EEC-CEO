@@ -88,14 +88,14 @@ export const Sidebar: React.FC = () => {
         />
       )}
 
-      {/* Sidebar Container - Sticky / Fixed when scrolling */}
+      {/* Sidebar Container - Fixed drawer on mobile, stationary full-height column on desktop */}
       <aside
-        className={`fixed lg:relative right-0 h-full w-72 bg-gradient-to-b from-blue-950 via-slate-900 to-blue-950 text-slate-100 flex flex-col shadow-2xl border-l border-blue-800/40 z-40 transition-transform duration-300 shrink-0 ${
+        className={`fixed lg:static inset-y-0 right-0 w-64 shrink-0 h-full bg-gradient-to-b from-blue-950 via-slate-900 to-blue-950 text-slate-100 flex flex-col shadow-2xl border-l border-blue-800/40 z-50 lg:z-20 transition-transform duration-300 ${
           isMobileOpen ? 'translate-x-0' : 'translate-x-full lg:translate-x-0'
         }`}
       >
         {/* Company Header inside Sidebar */}
-        <div className="p-4 border-b border-blue-900/60 bg-blue-950/80 text-center">
+        <div className="p-4 border-b border-blue-900/60 bg-blue-950/80 text-center shrink-0">
           <div className="flex items-center justify-center gap-2 mb-1">
             <div className="w-9 h-9 rounded-xl bg-blue-600 flex items-center justify-center shadow-md border border-blue-400">
               <Building2 className="w-5 h-5 text-white" />

@@ -13,7 +13,7 @@ interface DocumentItem {
 }
 
 export const ProjectDocumentsView: React.FC = () => {
-  const { projects } = useApp();
+  const { projects, addNotification } = useApp();
   const [categoryFilter, setCategoryFilter] = useState<string>('الكل');
   const [previewDoc, setPreviewDoc] = useState<DocumentItem | null>(null);
   const [isAddDocOpen, setIsAddDocOpen] = useState<boolean>(false);
@@ -75,7 +75,7 @@ export const ProjectDocumentsView: React.FC = () => {
     setDocuments([doc, ...documents]);
     setIsAddDocOpen(false);
     setNewTitle('');
-    alert('تم رفع المستند بنجاح وأرشفته في النظام.');
+    addNotification('تم رفع المستند بنجاح', `تم أرشفة "${doc.title}" في سجل الوثائق الهندسية.`, 'success');
   };
 
   const filteredDocs = documents.filter(d => categoryFilter === 'الكل' || d.category === categoryFilter);
@@ -152,7 +152,7 @@ export const ProjectDocumentsView: React.FC = () => {
                 <span>معاينة المستند</span>
               </button>
               <button
-                onClick={() => alert(`جاري تحميل المستند: ${doc.title}`)}
+                onClick={() => addNotification('جاري تحميل المستند', `تم بدء تنزيل النسخة المعتمدة من "${doc.title}".`, 'info')}
                 className="p-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-xl transition-colors"
                 title="تحميل"
               >

@@ -15,6 +15,8 @@ import { ReportsView } from './components/ReportsView';
 import { CalendarView } from './components/CalendarView';
 import { SupportView } from './components/SupportView';
 import { ProjectDocumentsView } from './components/ProjectDocumentsView';
+import { ContractsView } from './components/ContractsView';
+import { ProcurementsView } from './components/ProcurementsView';
 import { Modals } from './components/Modals';
 import { NotificationToast } from './components/NotificationToast';
 import { Minimize2 } from 'lucide-react';
@@ -23,9 +25,9 @@ const MainContent: React.FC = () => {
   const { activeTab, focusMode, setFocusMode } = useApp();
 
   return (
-    <div className={`flex-1 h-full overflow-y-auto transition-all duration-300 ${focusMode ? 'bg-slate-950 p-2 sm:p-6' : ''}`}>
+    <main className={`flex-1 min-w-0 h-full overflow-y-auto overflow-x-hidden transition-all duration-300 ${focusMode ? 'p-2 sm:p-6' : ''}`}>
       {focusMode && (
-        <div className="bg-amber-500/10 border border-amber-500/30 text-amber-300 px-4 py-2 rounded-xl mb-4 flex items-center justify-between text-xs">
+        <div className="bg-amber-500/10 border border-amber-500/30 text-amber-300 px-4 py-2 rounded-xl mb-4 flex items-center justify-between text-xs max-w-[1600px] mx-auto mt-2">
           <span className="font-bold flex items-center gap-2">
             <span className="w-2.5 h-2.5 bg-amber-400 rounded-full animate-ping"></span>
             وضع التركيز مفعل (تم إخفاء القوائم الجانبية لتسهيل قراءة وتحليل التقارير)
@@ -47,9 +49,29 @@ const MainContent: React.FC = () => {
       {activeTab === 'reports' && <ReportsView />}
       {activeTab === 'calendar' && <CalendarView />}
       {activeTab === 'support' && <SupportView />}
-      {activeTab === 'contracts' && <ProjectsView />}
-      {activeTab === 'procurements' && <ProjectsView />}
+      {activeTab === 'contracts' && <ContractsView />}
+      {activeTab === 'procurements' && <ProcurementsView />}
       {activeTab === 'documents' && <ProjectDocumentsView />}
+    </main>
+  );
+};
+
+const AppShell: React.FC = () => {
+  const { focusMode, darkMode } = useApp();
+  return (
+    <div
+      dir="rtl"
+      className={`h-screen w-full flex flex-col font-['Cairo'] overflow-hidden transition-colors duration-300 ${
+        darkMode ? 'bg-slate-950 text-slate-100' : 'bg-slate-100 text-slate-900'
+      }`}
+    >
+      <Header />
+      <div className="flex-1 flex overflow-hidden relative min-h-0">
+        {!focusMode && <Sidebar />}
+        <MainContent />
+      </div>
+      <Modals />
+      <NotificationToast />
     </div>
   );
 };
@@ -57,24 +79,7 @@ const MainContent: React.FC = () => {
 export default function App() {
   return (
     <AppProvider>
-      <div className="h-screen flex flex-col bg-slate-950 text-slate-100 font-['Cairo'] overflow-hidden">
-        <Header />
-        <div className="flex-1 flex overflow-hidden">
-          <FocusSidebarWrapper />
-        </div>
-        <Modals />
-        <NotificationToast />
-      </div>
+      <AppShell />
     </AppProvider>
   );
 }
-
-const FocusSidebarWrapper: React.FC = () => {
-  const { focusMode } = useApp();
-  return (
-    <>
-      {!focusMode && <Sidebar />}
-      <MainContent />
-    </>
-  );
-};

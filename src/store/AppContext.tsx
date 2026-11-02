@@ -18,7 +18,9 @@ interface AppContextType {
   approvals: ApprovalItem[];
   handleApprovalAction: (id: string, action: 'معتمد' | 'مرفوض') => void;
   notifications: NotificationItem[];
+  addNotification: (title: string, message: string, type?: 'info' | 'warning' | 'success' | 'danger') => void;
   markNotificationAsRead: (id: string) => void;
+  removeNotification: (id: string) => void;
   clearAllNotifications: () => void;
   searchQuery: string;
   setSearchQuery: (q: string) => void;
@@ -124,9 +126,9 @@ const initialProjects: Project[] = [
     id: 'p-6',
     name: 'تطوير نظام التكييف - المرحلة الثانية',
     category: 'ميكانيكا',
-    progress: 80,
-    initialDelivery: 50,
-    finalDelivery: 10,
+    progress: 100,
+    initialDelivery: 100,
+    finalDelivery: 100,
     status: 'مكتملة',
     budget: 75000000,
     spent: 72000000,
@@ -135,6 +137,54 @@ const initialProjects: Project[] = [
     endDate: '2026-01-15',
     manager: 'م. عادل الشريف',
     image: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=800&q=80'
+  },
+  {
+    id: 'p-7',
+    name: 'محطة محولات الكهرباء الرئيسية',
+    category: 'كهرباء / تيار خفيف',
+    progress: 40,
+    initialDelivery: 0,
+    finalDelivery: 0,
+    status: 'مؤجلة',
+    budget: 140000000,
+    spent: 52000000,
+    location: 'المنطقة الصناعية - العاشر من رمضان',
+    startDate: '2025-02-15',
+    endDate: '2026-11-30',
+    manager: 'م. طارق المنشاوي',
+    image: 'https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?auto=format&fit=crop&w=800&q=80'
+  },
+  {
+    id: 'p-8',
+    name: 'إنشاء مجمع المخازن الاستراتيجية',
+    category: 'إنشائي',
+    progress: 100,
+    initialDelivery: 100,
+    finalDelivery: 95,
+    status: 'مكتملة',
+    budget: 160000000,
+    spent: 155000000,
+    location: 'مدينة بدر',
+    startDate: '2024-01-10',
+    endDate: '2025-12-20',
+    manager: 'م. هاني عبد الرحمن',
+    image: 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=800&q=80'
+  },
+  {
+    id: 'p-9',
+    name: 'تأهيل واجهات البرج الإداري',
+    category: 'تشطيبات',
+    progress: 25,
+    initialDelivery: 0,
+    finalDelivery: 0,
+    status: 'معرضة للمخاطر',
+    budget: 65000000,
+    spent: 22000000,
+    location: 'العلمين الجديدة',
+    startDate: '2025-05-01',
+    endDate: '2026-08-30',
+    manager: 'م. كريم فهمي',
+    image: 'https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=800&q=80'
   }
 ];
 
@@ -175,7 +225,7 @@ const initialNotifications: NotificationItem[] = [
   {
     id: 'notif-1',
     title: 'اعتماد ميزانية جديدة',
-    message: 'تم اعتماد ملحق ميزانية مشروع محطة معالجة المياه بنجاح.',
+    message: 'تم اعتماد ملحق ميزانية مشروع محطة معالجة المياه بنجاح بقيمة 18.5 مليون ج.م.',
     time: 'منذ 15 دقيقة',
     read: false,
     type: 'success'
@@ -183,18 +233,50 @@ const initialNotifications: NotificationItem[] = [
   {
     id: 'notif-2',
     title: 'تنبيه مخاطر موقع',
-    message: 'ارتفاع مؤشر سرعة الرياح في موقع العاصمة الإدارية، يرجى توخي الحذر.',
+    message: 'ارتفاع مؤشر سرعة الرياح في موقع العاصمة الإدارية، يرجى مراجعة إجراءات السلامة للروافع البرجية.',
     time: 'منذ ساعة',
     read: false,
     type: 'warning'
   },
   {
     id: 'notif-3',
-    title: 'طلب موافقة جديد',
-    message: 'تم إدراج أمر تغيير رقم 014 في قائمة الموافقات المعلقة.',
+    title: 'طلب موافقة عاجل',
+    message: 'تم إدراج أمر تغيير رقم P-014 (أعمال كهروميكانيكية إضافية) في قائمة الموافقات المعلقة.',
+    time: 'منذ ساعتين',
+    read: false,
+    type: 'danger'
+  },
+  {
+    id: 'notif-4',
+    title: 'توريد معدات الموقع الرئيسي',
+    message: 'وصول شحنة المحولات الكهربائية ولوحات الجهد المتوسط إلى موقع محطة المحولات وإتمام الفحص الابتدائي.',
     time: 'منذ 3 ساعات',
+    read: false,
+    type: 'info'
+  },
+  {
+    id: 'notif-5',
+    title: 'إنجاز مرحلة تنفيذية (85%)',
+    message: 'تجاوز مشروع محطة معالجة المياه نسبة 85% من الجدول الزمني المعتمد قبل الموعد المحدد بأسبوعين.',
+    time: 'منذ 5 ساعات',
+    read: true,
+    type: 'success'
+  },
+  {
+    id: 'notif-6',
+    title: 'تقرير الجودة والسلامة المهنية (HSE)',
+    message: 'اعتماد التقرير الأسبوعي للسلامة المهنية بنسبة التزام 98.4% دون تسجيل أي حوادث توقف.',
+    time: 'أمس',
     read: true,
     type: 'info'
+  },
+  {
+    id: 'notif-7',
+    title: 'مراجعة مستخلص مقاول الباطن',
+    message: 'المستخلص الجاري رقم (8) لأعمال التكييف المركزي جاهز للمراجعة والاعتماد المالي.',
+    time: 'منذ يومين',
+    read: true,
+    type: 'warning'
   }
 ];
 
@@ -241,7 +323,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   // LocalStorage persistence for projects
   const [projects, setProjects] = useState<Project[]>(() => {
     const saved = localStorage.getItem('eg_projects');
-    return saved ? JSON.parse(saved) : initialProjects;
+    if (saved) {
+      const parsed: Project[] = JSON.parse(saved);
+      const existingIds = new Set(parsed.map(p => p.id));
+      const missing = initialProjects.filter(p => !existingIds.has(p.id));
+      return [...parsed, ...missing];
+    }
+    return initialProjects;
   });
 
   const [approvals, setApprovals] = useState<ApprovalItem[]>(() => {
@@ -251,7 +339,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const [notifications, setNotifications] = useState<NotificationItem[]>(() => {
     const saved = localStorage.getItem('eg_notifications');
-    return saved ? JSON.parse(saved) : initialNotifications;
+    if (saved) {
+      const parsed: NotificationItem[] = JSON.parse(saved);
+      const existingIds = new Set(parsed.map(n => n.id));
+      const missing = initialNotifications.filter(n => !existingIds.has(n.id));
+      return [...parsed, ...missing];
+    }
+    return initialNotifications;
   });
 
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -329,8 +423,24 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
   };
 
+  const addNotification = (title: string, message: string, type: 'info' | 'warning' | 'success' | 'danger' = 'info') => {
+    const newNotif: NotificationItem = {
+      id: `notif-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+      title,
+      message,
+      time: 'الآن',
+      read: false,
+      type
+    };
+    setNotifications(prev => [newNotif, ...prev]);
+  };
+
   const markNotificationAsRead = (id: string) => {
     setNotifications(prev => prev.map(n => n.id === id ? { ...n, read: true } : n));
+  };
+
+  const removeNotification = (id: string) => {
+    setNotifications(prev => prev.filter(n => n.id !== id));
   };
 
   const clearAllNotifications = () => {
@@ -356,7 +466,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         approvals,
         handleApprovalAction,
         notifications,
+        addNotification,
         markNotificationAsRead,
+        removeNotification,
         clearAllNotifications,
         searchQuery,
         setSearchQuery,
@@ -371,7 +483,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         user
       }}
     >
-      <div className={darkMode ? 'dark bg-slate-950 text-slate-100 min-h-screen' : 'bg-slate-100 text-slate-800 min-h-screen'}>
+      <div className={darkMode ? 'dark bg-slate-950 text-slate-100 min-h-screen' : 'light-mode bg-slate-100 text-slate-800 min-h-screen'}>
         {children}
       </div>
     </AppContext.Provider>

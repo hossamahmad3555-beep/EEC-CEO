@@ -1,18 +1,34 @@
 import React, { useState } from 'react';
-import { Building2, Plus, Search, Filter, MapPin, Calendar, User, CheckCircle2, TrendingUp, Sparkles, Map as MapIcon, Grid } from 'lucide-react';
+import { Building2, Plus, Search, Filter, MapPin, Calendar, User, CheckCircle2, TrendingUp, Sparkles, Map as MapIcon, Grid, FileText } from 'lucide-react';
 import { useApp } from '../store/AppContext';
 import { ProjectMap } from './ProjectMap';
 
 export const ProjectsView: React.FC = () => {
   const { projects, subTab, updateProjectProgress, setIsNewProjectOpen } = useApp();
   const [filterCategory, setFilterCategory] = useState<string>(subTab || 'الكل');
+  const [filterStatus, setFilterStatus] = useState<string>('الكل');
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [viewMode, setViewMode] = useState<'grid' | 'map'>('grid');
 
+  React.useEffect(() => {
+    if (subTab) {
+      setFilterCategory(subTab);
+    }
+  }, [subTab]);
+
+  const matchesStatusFilter = (status: string, progress: number, selectedStatus: string) => {
+    if (selectedStatus === 'الكل') return true;
+    if (selectedStatus === 'قيد التنفيذ') return status === 'قيد التنفيذ';
+    if (selectedStatus === 'مكتمل') return status === 'مكتملة' || progress === 100;
+    if (selectedStatus === 'متوقف') return status === 'مؤجلة' || status === 'معرضة للمخاطر';
+    return true;
+  };
+
   const filteredProjects = projects.filter(p => {
     const matchesCategory = filterCategory === 'الكل' || p.category.includes(filterCategory);
+    const matchesStatus = matchesStatusFilter(p.status, p.progress, filterStatus);
     const matchesSearch = p.name.includes(searchTerm) || p.location.includes(searchTerm) || p.manager.includes(searchTerm);
-    return matchesCategory && matchesSearch;
+    return matchesCategory && matchesStatus && matchesSearch;
   });
 
   const calculateSmartPrediction = (startDateStr: string, endDateStr: string, progress: number) => {
@@ -93,33 +109,61 @@ export const ProjectsView: React.FC = () => {
         </div>
       </div>
 
-      {/* Filter and Search Bar */}
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-slate-900/60 p-4 rounded-2xl border border-slate-800">
-        <div className="flex items-center gap-2 overflow-x-auto w-full sm:w-auto pb-2 sm:pb-0">
+      {/* Interactive Tabs Filter (By Status & Specialty) and Search Bar */}
+      <div className="bg-slate-900/80 p-4 rounded-2xl border border-slate-800 space-y-4">
+        <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
+          {/* Status Tabs */}
+          <div className="flex items-center gap-2 overflow-x-auto w-full lg:w-auto pb-1 lg:pb-0">
+            <span className="text-xs font-bold text-slate-400 ml-1 shrink-0">الحالة:</span>
+            {['الكل', 'قيد التنفيذ', 'مكتمل', 'متوقف'].map((statusTab) => (
+              <button
+                key={statusTab}
+                onClick={() => setFilterStatus(statusTab)}
+                className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap flex items-center gap-2 ${
+                  filterStatus === statusTab
+                    ? 'bg-blue-600 text-white shadow-md shadow-blue-600/20'
+                    : 'bg-slate-950 text-slate-300 border border-slate-800 hover:bg-slate-800'
+                }`}
+              >
+                <span>{statusTab}</span>
+                <span className={`px-1.5 py-0.5 rounded-full text-[10px] ${
+                  filterStatus === statusTab ? 'bg-white/20 text-white' : 'bg-slate-900 text-slate-400'
+                }`}>
+                  {projects.filter(p => matchesStatusFilter(p.status, p.progress, statusTab)).length}
+                </span>
+              </button>
+            ))}
+          </div>
+
+          {/* Search Input */}
+          <div className="relative w-full lg:w-72">
+            <Search className="absolute right-3 top-2.5 w-4 h-4 text-slate-400" />
+            <input
+              type="text"
+              placeholder="بحث عن مشروع أو موقع أو مهندس..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full bg-slate-950 border border-slate-800 rounded-xl pr-9 pl-4 py-2 text-xs text-slate-100 placeholder:text-slate-500 focus:outline-none focus:border-blue-500"
+            />
+          </div>
+        </div>
+
+        {/* Specialty Tabs */}
+        <div className="flex items-center gap-2 overflow-x-auto pt-3 border-t border-slate-800/80">
+          <span className="text-xs font-bold text-slate-400 ml-1 shrink-0">التخصص:</span>
           {['الكل', 'إنشائي', 'تشطيبات', 'كهرباء', 'تيار خفيف', 'ميكانيكا'].map((cat) => (
             <button
               key={cat}
               onClick={() => setFilterCategory(cat)}
-              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
+              className={`px-4 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
                 filterCategory === cat
-                  ? 'bg-blue-600 text-white shadow-md'
-                  : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
+                  ? 'bg-indigo-600 text-white shadow-md'
+                  : 'bg-slate-950 text-slate-300 border border-slate-800 hover:bg-slate-800'
               }`}
             >
               {cat}
             </button>
           ))}
-        </div>
-
-        <div className="relative w-full sm:w-72">
-          <Search className="absolute right-3 top-2.5 w-4 h-4 text-slate-400" />
-          <input
-            type="text"
-            placeholder="بحث عن مشروع أو موقع أو مهندس..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full bg-slate-950 border border-slate-800 rounded-xl pr-9 pl-4 py-2 text-xs text-slate-100 placeholder:text-slate-500 focus:outline-none focus:border-blue-500"
-          />
         </div>
       </div>
 
@@ -163,6 +207,14 @@ export const ProjectsView: React.FC = () => {
                       {project.status}
                     </span>
                   </div>
+
+                  {project.contractCode && (
+                    <div className="absolute top-3 left-3">
+                      <span className="bg-slate-950/80 backdrop-blur-md text-slate-300 font-mono text-[10px] px-2 py-1 rounded-lg border border-slate-700/80">
+                        {project.contractCode}
+                      </span>
+                    </div>
+                  )}
 
                   <div className="absolute bottom-3 right-3 left-3">
                     <h3 className="text-white font-black text-base">{project.name}</h3>
@@ -211,6 +263,31 @@ export const ProjectsView: React.FC = () => {
                       </div>
                     </div>
                   </div>
+
+                  {project.documents && project.documents.length > 0 && (
+                    <div className="bg-slate-950/60 p-2.5 rounded-xl border border-slate-800/80 space-y-1.5">
+                      <div className="flex items-center justify-between text-[11px] font-bold text-blue-300">
+                        <span className="flex items-center gap-1.5">
+                          <FileText className="w-3.5 h-3.5 text-blue-400" />
+                          <span>المستندات التأسيسية المرفقة</span>
+                        </span>
+                        <span className="bg-blue-950 text-blue-300 px-1.5 py-0.5 rounded text-[10px]">
+                          {project.documents.length} ملفات
+                        </span>
+                      </div>
+                      <div className="flex flex-wrap gap-1.5 pt-1">
+                        {project.documents.map(doc => (
+                          <span
+                            key={doc.id}
+                            title={`${doc.name} (${doc.size})`}
+                            className="text-[10px] bg-slate-900 border border-slate-800 text-slate-300 px-2 py-0.5 rounded-md truncate max-w-[140px]"
+                          >
+                            {doc.category}: {doc.name}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
 
                   <div className="grid grid-cols-2 gap-3 pt-2 border-t border-slate-800">
                     <div>

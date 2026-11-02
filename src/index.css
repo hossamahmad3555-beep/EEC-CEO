@@ -22,3 +22,65 @@
   background: rgba(59, 130, 246, 0.8);
 }
 
+/* Clean Light Mode adaptation without breaking dark-background badges or KPI cards */
+.light-mode main .bg-slate-900\/90,
+.light-mode main .bg-slate-900\/80,
+.light-mode main .bg-slate-900\/70,
+.light-mode main .bg-slate-900\/60 {
+  background-color: #ffffff !important;
+  border-color: #cbd5e1 !important;
+  color: #0f172a !important;
+  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.06) !important;
+}
+
+.light-mode main .from-slate-900.to-blue-950 {
+  background-image: linear-gradient(to bottom right, #ffffff, #eff6ff) !important;
+  border-color: #93c5fd !important;
+  box-shadow: 0 4px 15px -3px rgba(37, 99, 235, 0.08) !important;
+}
+
+.light-mode main .bg-slate-950,
+.light-mode main .bg-slate-950\/80,
+.light-mode main .bg-slate-950\/70,
+.light-mode main .bg-slate-950\/60,
+.light-mode main .bg-slate-950\/50,
+.light-mode main .bg-slate-950\/40 {
+  background-color: #f8fafc !important;
+  border-color: #e2e8f0 !important;
+  color: #1e293b !important;
+}
+
+.light-mode main .text-white {
+  color: #0f172a !important;
+}
+
+.light-mode main .bg-blue-600.text-white,
+.light-mode main .bg-blue-600 .text-white,
+.light-mode main .bg-emerald-600.text-white,
+.light-mode main .bg-emerald-600 .text-white,
+.light-mode main .bg-rose-600.text-white,
+.light-mode main .bg-rose-600 .text-white,
+.light-mode main .bg-indigo-600.text-white,
+.light-mode main .bg-indigo-600 .text-white,
+.light-mode main .bg-amber-600.text-white,
+.light-mode main .bg-amber-600 .text-white,
+.light-mode main .relative.h-36 .text-white,
+.light-mode main .relative.h-44 .text-white {
+  color: #ffffff !important;
+}
+
+.light-mode main .text-slate-300,
+.light-mode main .text-slate-200 {
+  color: #334155 !important;
+}
+
+.light-mode main .text-slate-400 {
+  color: #475569 !important;
+}
+
+.light-mode main .border-slate-800,
+.light-mode main .border-slate-800\/90,
+.light-mode main .border-slate-800\/80,
+.light-mode main .border-slate-800\/60 {
+  border-color: #e2e8f0 !important;
+}
