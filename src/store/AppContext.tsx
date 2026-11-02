@@ -203,11 +203,42 @@ const AppContext = createContext<AppContextType | undefined>(undefined);
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [activeTab, setActiveTab] = useState<string>('dashboard');
   const [subTab, setSubTab] = useState<string | null>(null);
-  const [darkMode, setDarkMode] = useState<boolean>(true);
+  
+  // System theme detection & manual override persistence
+  const [darkMode, setDarkModeState] = useState<boolean>(() => {
+    const saved = localStorage.getItem('eg_dark_mode');
+    if (saved !== null) {
+      return JSON.parse(saved);
+    }
+    // Check system preference
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      return true;
+    }
+    return true; // Default dark
+  });
+
+  const setDarkMode = (dark: boolean) => {
+    setDarkModeState(dark);
+    localStorage.setItem('eg_dark_mode', JSON.stringify(dark));
+  };
+
+  useEffect(() => {
+    // Listen to system theme changes if user hasn't manually set preference
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    const handler = (e: MediaQueryListEvent) => {
+      const saved = localStorage.getItem('eg_dark_mode');
+      if (saved === null) {
+        setDarkModeState(e.matches);
+      }
+    };
+    mediaQuery.addEventListener('change', handler);
+    return () => mediaQuery.removeEventListener('change', handler);
+  }, []);
+
   const [focusMode, setFocusMode] = useState<boolean>(false);
   const [readingMode, setReadingMode] = useState<boolean>(false);
   
-  // LocalStorage persistence
+  // LocalStorage persistence for projects
   const [projects, setProjects] = useState<Project[]>(() => {
     const saved = localStorage.getItem('eg_projects');
     return saved ? JSON.parse(saved) : initialProjects;

@@ -23,7 +23,7 @@ const MainContent: React.FC = () => {
   const { activeTab, focusMode, setFocusMode } = useApp();
 
   return (
-    <div className={`flex-1 overflow-y-auto transition-all duration-300 ${focusMode ? 'bg-slate-950 p-2 sm:p-6' : ''}`}>
+    <div className={`flex-1 h-full overflow-y-auto transition-all duration-300 ${focusMode ? 'bg-slate-950 p-2 sm:p-6' : ''}`}>
       {focusMode && (
         <div className="bg-amber-500/10 border border-amber-500/30 text-amber-300 px-4 py-2 rounded-xl mb-4 flex items-center justify-between text-xs">
           <span className="font-bold flex items-center gap-2">
@@ -57,7 +57,7 @@ const MainContent: React.FC = () => {
 export default function App() {
   return (
     <AppProvider>
-      <div className="min-h-screen flex flex-col bg-slate-950 text-slate-100 font-['Cairo']">
+      <div className="h-screen flex flex-col bg-slate-950 text-slate-100 font-['Cairo'] overflow-hidden">
         <Header />
         <div className="flex-1 flex overflow-hidden">
           <FocusSidebarWrapper />

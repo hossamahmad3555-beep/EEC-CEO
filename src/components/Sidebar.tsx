@@ -74,7 +74,7 @@ export const Sidebar: React.FC = () => {
       <div className="lg:hidden fixed bottom-4 left-4 z-50">
         <button
           onClick={() => setIsMobileOpen(!isMobileOpen)}
-          className="bg-blue-600 text-white p-3.5 rounded-full shadow-2xl hover:bg-blue-700 transition-all flex items-center justify-center border-2 border-white/20"
+          className="bg-blue-600 text-white p-3.5 rounded-full shadow-2xl hover:bg-blue-700 transition-all flex items-center justify-center border-2 border-white/25"
         >
           {isMobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
         </button>
@@ -88,9 +88,9 @@ export const Sidebar: React.FC = () => {
         />
       )}
 
-      {/* Sidebar Container */}
+      {/* Sidebar Container - Sticky / Fixed when scrolling */}
       <aside
-        className={`fixed lg:static top-0 right-0 h-full w-72 bg-gradient-to-b from-blue-950 via-slate-900 to-blue-950 text-slate-100 flex flex-col shadow-2xl border-l border-blue-800/40 z-40 transition-transform duration-300 ${
+        className={`fixed lg:relative right-0 h-full w-72 bg-gradient-to-b from-blue-950 via-slate-900 to-blue-950 text-slate-100 flex flex-col shadow-2xl border-l border-blue-800/40 z-40 transition-transform duration-300 shrink-0 ${
           isMobileOpen ? 'translate-x-0' : 'translate-x-full lg:translate-x-0'
         }`}
       >
