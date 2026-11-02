@@ -1,0 +1,6 @@
+{
+  "name": "لوحة المتابعة التنفيذية - الشركة المصرية الهندسية للمقاولات",
+  "description": "لوحة تحكم تنفيذية متقدمة لشركة المقاولات لإدارة المشاريع والميزانية والمؤشرات التنفيذية والموافقات",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
